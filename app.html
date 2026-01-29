@@ -147,14 +147,14 @@
       line-height: 1.4;
     }
 
-    /* Страница услуги — отдельный экран */
+    /* Экран услуги */
     .service-screen {
       display: none;
-      padding: 20px;
     }
 
     .service-screen.active {
       display: block;
+      padding: 20px;
     }
 
     .service-info {
@@ -213,7 +213,7 @@
       opacity: 0.9;
     }
 
-    /* Нижняя навигация — иконки больше */
+    /* Нижняя навигация */
     .navbar {
       position: fixed;
       bottom: 8px;
@@ -254,11 +254,11 @@
     }
 
     .nav-item i {
-      font-size: 22px; /* ↑ Увеличено с 20px */
+      font-size: 22px;
       margin-bottom: 2px;
     }
 
-    /* Скрытие контента */
+    /* Скрытие страниц */
     .page {
       display: none;
     }
@@ -336,19 +336,7 @@
         <h1>📰 Новости</h1>
         <p class="subtitle">Последние обновления от AI Мастера</p>
       </header>
-
-      <!-- Форма для админа -->
-      <div id="news-form" style="display: none;">
-        <textarea id="news-title" placeholder="Заголовок новости" rows="2" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px;"></textarea>
-        <textarea id="news-text" placeholder="Текст новости" rows="4" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px; margin-top:8px;"></textarea>
-        <input type="url" id="news-image" placeholder="URL изображения (опционально)" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px; margin-top:8px;" />
-        <button onclick="postNews()" style="margin-top:10px; background:var(--primary); color:white; border:none; padding:10px; width:100%; border-radius:8px;">Опубликовать</button>
-      </div>
-
-      <!-- Новостные посты -->
-      <div id="news-container">
-        <!-- Динамически загружаются -->
-      </div>
+      <p style="color:var(--text-secondary); text-align:center; padding:20px;">Новости скоро появятся!</p>
     </div>
 
     <!-- Страница: Профиль -->
@@ -406,7 +394,7 @@
         document.getElementById('user-id').textContent = user.id;
 
         if (user.id == ADMIN_ID) {
-          document.getElementById('news-form').style.display = 'block';
+          // Можно активировать админ-панель
         }
       }
     }
@@ -422,7 +410,6 @@
         const pageId = item.dataset.page;
         document.getElementById(pageId).classList.add('active');
 
-        if (pageId === 'news-page') loadNews();
         if (pageId === 'profile-page') loadUser();
       });
     });
@@ -434,26 +421,24 @@
         const info = card.dataset.info;
         selectedService = card.dataset.service;
 
-        // Скрываем основную страницу
         document.getElementById('services-page').classList.remove('active');
         document.getElementById('service-screen').classList.add('active');
 
-        // Заполняем данные
         document.getElementById('screen-title').textContent = title;
         document.getElementById('screen-info').textContent = info;
         document.getElementById('prompt').value = '';
       });
     });
 
-    // --- Возврат к услугам ---
+    // --- Возврат по кнопке Telegram ---
     window.addEventListener('load', () => {
       loadUser();
 
-      // Добавляем возможность "назад" по свайпу
       Telegram.WebApp.BackButton.show();
       Telegram.WebApp.BackButton.onClick(() => {
-        if (document.getElementById('service-screen').classList.contains('active')) {
-          document.getElementById('service-screen').classList.remove('active');
+        const screen = document.getElementById('service-screen');
+        if (screen.classList.contains('active')) {
+          screen.classList.remove('active');
           document.getElementById('services-page').classList.add('active');
         } else {
           document.querySelector('.nav-item[data-page="services-page"]').click();
@@ -461,7 +446,7 @@
       });
     });
 
-    // --- Отправка данных ---
+    // --- Отправка данных в бот ---
     function sendData() {
       const prompt = document.getElementById("prompt").value.trim();
       if (!prompt) {
@@ -469,66 +454,18 @@
         return;
       }
 
-      const data = { service: selectedService, prompt };
-      Telegram.WebApp.sendData(JSON.stringify(data));
-      Telegram.WebApp.showNotification("✅ Запрос отправлен в бот!");
-    }
+      const data = {
+        service: selectedService,
+        prompt: prompt
+      };
 
-    // --- Работа с новостями ---
-    function loadNews() {
-      const container = document.getElementById('news-container');
-      container.innerHTML = '';
-
-      const news = JSON.parse(localStorage.getItem('ai-master-news') || '[]');
-
-      if (news.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding:20px;">Нет новостей</p>';
-        return;
+      try {
+        Telegram.WebApp.sendData(JSON.stringify(data));
+        Telegram.WebApp.showAlert("✅ Запрос отправлен!", () => {});
+      } catch (err) {
+        console.error("Ошибка отправки:", err);
+        alert("Не удалось отправить данные. Попробуйте снова.");
       }
-
-      news.forEach(post => {
-        const div = document.createElement('div');
-        div.className = 'news-post';
-        div.style.backgroundImage = `url('${post.image || 'https://i.imgur.com/9lGjZ9T.png'}')`;
-        div.innerHTML = `
-          <p><b>${post.title}</b></p>
-          <small>${post.date}</small>
-          <p style="margin-top:8px;">${post.text}</p>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function postNews() {
-      if (currentUser?.id !== ADMIN_ID) {
-        alert('❌ Только создатель может публиковать новости.');
-        return;
-      }
-
-      const title = document.getElementById('news-title').value.trim();
-      const text = document.getElementById('news-text').value.trim();
-      const image = document.getElementById('news-image').value.trim() || 'https://i.imgur.com/9lGjZ9T.png';
-
-      if (!title || !text) {
-        alert('Введите заголовок и текст!');
-        return;
-      }
-
-      const news = JSON.parse(localStorage.getItem('ai-master-news') || '[]');
-      news.unshift({
-        title,
-        text,
-        image,
-        date: new Date().toLocaleDateString('ru-RU'),
-      });
-
-      localStorage.setItem('ai-master-news', JSON.stringify(news));
-      document.getElementById('news-title').value = '';
-      document.getElementById('news-text').value = '';
-      document.getElementById('news-image').value = '';
-
-      loadNews();
-      alert('✅ Новость опубликована!');
     }
   </script>
 </body>
