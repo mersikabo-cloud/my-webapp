@@ -18,7 +18,6 @@
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       --nav-height: 50px;
       --nav-bg: #1a1a1a;
-      --icon-size: 20px;
     }
 
     * {
@@ -33,7 +32,7 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 50px 20px calc(var(--nav-height) + 16px) 20px; /* отступ сверху под самолётик */
+      padding: 50px 20px calc(var(--nav-height) + 40px) 20px;
       overflow-x: hidden;
     }
 
@@ -42,7 +41,7 @@
       margin: 0 auto;
     }
 
-    /* Логотип-самолётик сверху слева */
+    /* Логотип-самолётик */
     .app-header {
       position: fixed;
       top: 16px;
@@ -82,7 +81,7 @@
       color: var(--text-secondary);
     }
 
-    /* Карточки услуг с фоном */
+    /* Карточки услуг */
     .services-grid {
       display: grid;
       gap: 14px;
@@ -148,14 +147,38 @@
       line-height: 1.4;
     }
 
-    /* Ввод и кнопка */
-    .input-group {
-      margin: 16px 0;
+    /* Страница услуги — отдельный экран */
+    .service-screen {
+      display: none;
+      padding: 20px;
+    }
+
+    .service-screen.active {
+      display: block;
+    }
+
+    .service-info {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .service-info h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .service-info p {
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: var(--card-bg);
       border: 1px solid #333;
       border-radius: 12px;
@@ -163,6 +186,7 @@
       color: var(--text);
       outline: none;
       transition: border 0.2s;
+      margin-bottom: 16px;
     }
 
     input[type="text"]:focus {
@@ -189,7 +213,7 @@
       opacity: 0.9;
     }
 
-    /* Нижняя навигация — маленькая с закруглёнными иконками */
+    /* Нижняя навигация — иконки больше */
     .navbar {
       position: fixed;
       bottom: 8px;
@@ -230,11 +254,11 @@
     }
 
     .nav-item i {
-      font-size: var(--icon-size);
+      font-size: 22px; /* ↑ Увеличено с 20px */
       margin-bottom: 2px;
     }
 
-    /* Скрытие контента при переключении */
+    /* Скрытие контента */
     .page {
       display: none;
     }
@@ -243,88 +267,22 @@
       display: block;
     }
 
-    /* Модальное окно */
-    .modal {
-      display: none;
+    /* Подпись внизу */
+    .footer {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
+      bottom: 50px;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      overflow: hidden;
-    }
-
-    .modal-header {
-      padding: 16px;
-      background: var(--primary);
-      color: white;
       text-align: center;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .modal-body {
-      padding: 20px;
-    }
-
-    .modal-footer {
-      padding: 16px;
-      text-align: right;
-      border-top: 1px solid #333;
-    }
-
-    .modal-footer button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    /* Новости с фоном */
-    .news-post {
-      background: #1e1e1e url('https://i.imgur.com/9lGjZ9T.png') no-repeat center center / cover;
-      border-radius: var(--border-radius);
-      padding: 16px;
-      margin-top: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .news-post::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1;
-    }
-
-    .news-post > * {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Форма создания новости (только для админа) */
-    #news-form {
-      display: none;
-      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      z-index: 999;
+      padding: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Верхний логотип-самолётик -->
+  <!-- Верхний логотип -->
   <div class="app-header" onclick="openChannel()">
     <i class="fas fa-paper-plane"></i>
     <span>AI Мастер</span>
@@ -340,31 +298,35 @@
       </header>
 
       <div class="services-grid">
-        <div class="service-card" data-service="presentation" data-info="Создайте профессиональную презентацию в PowerPoint за секунды. Подходит для учёбы, бизнеса и выступлений.">
+        <div class="service-card" data-service="presentation" data-title="Презентация" data-info="Создайте профессиональную презентацию в PowerPoint за секунды. Подходит для учёбы, бизнеса и выступлений.">
           <h3><i class="fas fa-chart-pie"></i> Презентация</h3>
           <p>Создайте PowerPoint за секунды по любой теме.</p>
         </div>
 
-        <div class="service-card" data-service="photo" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E. Идеально для дизайна, обложек и артов.">
+        <div class="service-card" data-service="photo" data-title="Фото" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E. Идеально для дизайна, обложек и артов.">
           <h3><i class="fas fa-image"></i> Фото</h3>
           <p>Генерируйте изображения по описанию (DALL·E).</p>
         </div>
 
-        <div class="service-card" data-service="video" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами. Готово к публикации в Telegram и Instagram.">
+        <div class="service-card" data-service="video" data-title="Видео" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами. Готово к публикации в Telegram и Instagram.">
           <h3><i class="fas fa-film"></i> Видео</h3>
           <p>Создаём короткие видеоролики (в разработке).</p>
         </div>
 
-        <div class="service-card" data-service="custom" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом. Мы делаем всё под ключ с документацией и поддержкой.">
+        <div class="service-card" data-service="custom" data-title="Индивидуальный проект" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом. Мы делаем всё под ключ с документацией и поддержкой.">
           <h3><i class="fas fa-cogs"></i> Индивидуальный проект</h3>
           <p>Курсовая, сайт, бот — всё под заказ.</p>
         </div>
       </div>
+    </div>
 
-      <div class="input-group">
-        <input type="text" id="prompt" placeholder="Введите тему или задание..." />
+    <!-- Экран выбранной услуги -->
+    <div id="service-screen" class="service-screen">
+      <div class="service-info">
+        <h2 id="screen-title">Услуга</h2>
+        <p id="screen-info">Описание</p>
       </div>
-
+      <input type="text" id="prompt" placeholder="Введите тему или задание..." />
       <button class="generate" onclick="sendData()">🚀 Сгенерировать</button>
     </div>
 
@@ -403,17 +365,6 @@
 
   </div>
 
-  <!-- Модальное окно -->
-  <div class="modal" id="service-modal">
-    <div class="modal-content">
-      <div class="modal-header" id="modal-title">Информация</div>
-      <div class="modal-body" id="modal-body">Описание услуги</div>
-      <div class="modal-footer">
-        <button onclick="closeModal()">Закрыть</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Нижняя навигация -->
   <div class="navbar">
     <div class="nav-item" data-page="news-page">
@@ -430,10 +381,16 @@
     </div>
   </div>
 
+  <!-- Подпись внизу -->
+  <div class="footer">
+    Все права защищены © 2025
+  </div>
+
   <script>
     // --- Настройки ---
-    const ADMIN_ID = 5499502358; // ← Замените на ваш реальный Telegram ID
+    const ADMIN_ID = 5499502358;
     let currentUser = null;
+    let selectedService = null;
 
     // --- Открыть канал ---
     function openChannel() {
@@ -459,6 +416,7 @@
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('service-screen').classList.remove('active');
 
         item.classList.add('active');
         const pageId = item.dataset.page;
@@ -469,30 +427,39 @@
       });
     });
 
-    // --- Открытие модального окна с информацией об услуге ---
+    // --- Переход на экран услуги ---
     document.querySelectorAll('.service-card').forEach(card => {
       card.addEventListener('click', () => {
-        const title = card.querySelector('h3').innerText;
+        const title = card.dataset.title;
         const info = card.dataset.info;
-
-        document.getElementById('modal-title').textContent = title;
-        document.getElementById('modal-body').textContent = info;
-
-        document.getElementById('service-modal').style.display = 'flex';
-
         selectedService = card.dataset.service;
-        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
+
+        // Скрываем основную страницу
+        document.getElementById('services-page').classList.remove('active');
+        document.getElementById('service-screen').classList.add('active');
+
+        // Заполняем данные
+        document.getElementById('screen-title').textContent = title;
+        document.getElementById('screen-info').textContent = info;
+        document.getElementById('prompt').value = '';
       });
     });
 
-    function closeModal() {
-      document.getElementById('service-modal').style.display = 'none';
-    }
+    // --- Возврат к услугам ---
+    window.addEventListener('load', () => {
+      loadUser();
 
-    // --- Выбор услуги ---
-    let selectedService = 'presentation';
-    document.querySelector('.service-card').classList.add('selected');
+      // Добавляем возможность "назад" по свайпу
+      Telegram.WebApp.BackButton.show();
+      Telegram.WebApp.BackButton.onClick(() => {
+        if (document.getElementById('service-screen').classList.contains('active')) {
+          document.getElementById('service-screen').classList.remove('active');
+          document.getElementById('services-page').classList.add('active');
+        } else {
+          document.querySelector('.nav-item[data-page="services-page"]').click();
+        }
+      });
+    });
 
     // --- Отправка данных ---
     function sendData() {
@@ -563,14 +530,6 @@
       loadNews();
       alert('✅ Новость опубликована!');
     }
-
-    // --- Загрузка при старте ---
-    window.addEventListener('load', () => {
-      loadUser();
-      if (document.getElementById('news-page').classList.contains('active')) {
-        loadNews();
-      }
-    });
   </script>
 </body>
 </html>
