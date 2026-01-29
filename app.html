@@ -463,7 +463,17 @@
           document.querySelector('.nav-item[data-page="services-page"]').click();
         }
       });
+
+      // Расширяем окно до максимума
+      if (Telegram.WebApp.expand) {
+        Telegram.WebApp.expand();
+      }
     });
+
+    // --- Правильное кодирование в base64 с поддержкой кириллицы ---
+    function btoaUTF8(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
 
     // --- Платёж через PayMaster ---
     function payAndGenerate() {
@@ -473,35 +483,49 @@
         return;
       }
 
+      if (!window.Telegram || !Telegram.WebApp) {
+        alert("❌ Telegram WebApp недоступен.");
+        return;
+      }
+
       const invoicePayload = JSON.stringify({
         service: selectedService,
         prompt: prompt,
         price: selectedPrice
       });
 
-      // Вызов платежа
-      Telegram.WebApp.showInvoice(
-        "1744374395:TEST:f7cf5a8aac3223d72854", // Тестовый провайдер
-        {
-          title: `Генерация: ${selectedService}`,
-          description: prompt.substring(0, 200),
-          currency: "RUB",
-          prices: [
-            { label: "Услуга", amount: selectedPrice * 100 } // в копейках
-          ],
-          payload: btoa(invoicePayload), // base64
-          photo_url: "https://i.imgur.com/9lGjZ9T.png",
-          provider_token: "1744374395:TEST:f7cf5a8aac3223d72854"
-        },
-        (status) => {
-          if (status === "paid") {
-            Telegram.WebApp.sendData(invoicePayload);
-            Telegram.WebApp.showAlert("✅ Оплата прошла! Генерируем контент...");
-          } else {
-            Telegram.WebApp.showAlert("❌ Оплата не прошла.");
+      const payloadBase64 = btoaUTF8(invoicePayload);
+
+      try {
+        Telegram.WebApp.showInvoice(
+          "1744374395:TEST:f7cf5a8aac3223d72854", // PayMaster Test
+          {
+            title: `Генерация: ${selectedService}`,
+            description: prompt.substring(0, 200),
+            currency: "RUB",
+            prices: [
+              { label: "Услуга", amount: selectedPrice * 100 } // в копейках
+            ],
+            payload: payloadBase64,
+            photo_url: "https://i.imgur.com/9lGjZ9T.png",
+            provider_token: "1744374395:TEST:f7cf5a8aac3223d72854"
+          },
+          (status) => {
+            console.log("Статус оплаты:", status);
+            if (status === "paid") {
+              Telegram.WebApp.sendData(invoicePayload);
+              Telegram.WebApp.showAlert("✅ Оплата прошла! Генерируем контент...");
+            } else if (status === "failed") {
+              Telegram.WebApp.showAlert("❌ Оплата не удалась.");
+            } else if (status === "closed") {
+              Telegram.WebApp.showAlert("🚫 Вы закрыли окно оплаты.");
+            }
           }
-        }
-      );
+        );
+      } catch (err) {
+        console.error("Ошибка вызова showInvoice:", err);
+        alert("Ошибка оплаты: " + err.message);
+      }
     }
   </script>
 </body>
