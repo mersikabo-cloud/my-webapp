@@ -2,67 +2,533 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Медиа-Генератор</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI Мастер</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-    body { background: #f5f5f5; color: #1a1a1a; padding: 20px; }
-    .container { max-width: 500px; margin: 0 auto; }
-    h1 { font-size: 24px; margin: 20px 0; text-align: center; }
-    .card {
-      background: white;
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --primary: #4c9aff;
+      --text: #ffffff;
+      --text-secondary: #b0b0b0;
+      --border-radius: 16px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --nav-height: 60px;
+      --nav-bg: #1a1a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 20px calc(var(--nav-height) + 20px) 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* Карточки услуг с фоном */
+    .services-grid {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .service-card {
+      background: var(--card-bg) url('https://i.imgur.com/9lGjZ9T.png') no-repeat center center / cover;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid #2d2d2d;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+      z-index: 1;
+      border-radius: var(--border-radius);
+    }
+
+    .service-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .service-card[data-service="photo"] {
+      background-image: url('https://i.imgur.com/8VvJkYm.jpg');
+    }
+
+    .service-card[data-service="video"] {
+      background-image: url('https://i.imgur.com/5XfFfDq.jpg');
+    }
+
+    .service-card[data-service="custom"] {
+      background-image: url('https://i.imgur.com/3KQ5ZqP.jpg');
+    }
+
+    .service-card:hover,
+    .service-card.selected {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 6px 16px rgba(76, 154, 255, 0.2);
+    }
+
+    .service-card h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .service-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Ввод и кнопка */
+    .input-group {
+      margin: 16px 0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      background: var(--card-bg);
+      border: 1px solid #333;
       border-radius: 12px;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(76, 154, 255, 0.2);
+    }
+
+    button.generate {
+      background: var(--primary);
+      color: white;
+      border: none;
       padding: 16px;
-      margin: 12px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      border-radius: var(--border-radius);
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(76, 154, 255, 0.3);
+      transition: all 0.2s;
     }
-    input, select, button {
-      width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;
+
+    button.generate:active {
+      transform: scale(0.98);
+      opacity: 0.9;
     }
-    button {
-      background: #0088cc; color: white; border: none; font-weight: bold; cursor: pointer;
+
+    /* Навигация снизу */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: var(--nav-bg);
+      border-top: 1px solid #2d2d2d;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     }
-    button:active { opacity: 0.8; }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 12px;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-item.active,
+    .nav-item:hover {
+      color: var(--primary);
+    }
+
+    .nav-item i {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    /* Скрытие контента при переключении */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Модальное окно */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      padding: 16px;
+      text-align: right;
+      border-top: 1px solid #333;
+    }
+
+    .modal-footer button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Новости с фоном */
+    .news-post {
+      background: #1e1e1e url('https://i.imgur.com/9lGjZ9T.png') no-repeat center center / cover;
+      border-radius: var(--border-radius);
+      padding: 16px;
+      margin-top: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .news-post::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    .news-post > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Форма создания новости (только для админа) */
+    #news-form {
+      display: none;
+      margin-top: 16px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🎨 Медиа-Генератор</h1>
 
-    <div class="card">
-      <select id="service">
-        <option value="text">📄 Текст</option>
-        <option value="presentation">📊 Презентация</option>
-        <option value="custom">🔧 Индивидуальный проект</option>
-        <option value="photo">🖼 Фото</option>
-        <option value="video">🎬 Видео</option>
-      </select>
+    <!-- Главная страница: Услуги -->
+    <div id="services-page" class="page active">
+      <header>
+        <h1>🚀 AI Мастер</h1>
+        <p class="subtitle">Умный ИИ для учебы, работы и творчества</p>
+      </header>
+
+      <div class="services-grid">
+        <div class="service-card" data-service="presentation" data-info="Создайте профессиональную презентацию в PowerPoint за секунды. Подходит для учёбы, бизнеса и выступлений.">
+          <h3><i class="fas fa-chart-pie"></i> Презентация</h3>
+          <p>Создайте PowerPoint за секунды по любой теме.</p>
+        </div>
+
+        <div class="service-card" data-service="photo" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E. Идеально для дизайна, обложек и артов.">
+          <h3><i class="fas fa-image"></i> Фото</h3>
+          <p>Генерируйте изображения по описанию (DALL·E).</p>
+        </div>
+
+        <div class="service-card" data-service="video" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами. Готово к публикации в Telegram и Instagram.">
+          <h3><i class="fas fa-film"></i> Видео</h3>
+          <p>Создаём короткие видеоролики (в разработке).</p>
+        </div>
+
+        <div class="service-card" data-service="custom" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом. Мы делаем всё под ключ с документацией и поддержкой.">
+          <h3><i class="fas fa-cogs"></i> Индивидуальный проект</h3>
+          <p>Курсовая, сайт, бот — всё под заказ.</p>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="prompt" placeholder="Введите тему или задание..." />
+      </div>
+
+      <button class="generate" onclick="sendData()">🚀 Сгенерировать</button>
     </div>
 
-    <div class="card">
-      <input type="text" id="prompt" placeholder="Введите тему..." />
+    <!-- Страница: Новости -->
+    <div id="news-page" class="page">
+      <header>
+        <h1>📰 Новости</h1>
+        <p class="subtitle">Последние обновления от AI Мастера</p>
+      </header>
+
+      <!-- Форма для админа -->
+      <div id="news-form" style="display: none;">
+        <textarea id="news-title" placeholder="Заголовок новости" rows="2" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px;"></textarea>
+        <textarea id="news-text" placeholder="Текст новости" rows="4" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px; margin-top:8px;"></textarea>
+        <input type="url" id="news-image" placeholder="URL изображения (опционально)" style="width:100%; background:#1e1e1e; border:1px solid #333; color:white; padding:10px; border-radius:8px; margin-top:8px;" />
+        <button onclick="postNews()" style="margin-top:10px; background:var(--primary); color:white; border:none; padding:10px; width:100%; border-radius:8px;">Опубликовать</button>
+      </div>
+
+      <!-- Новостные посты -->
+      <div id="news-container">
+        <!-- Динамически загружаются -->
+      </div>
     </div>
 
-    <div class="card">
-      <button onclick="sendData()">Сгенерировать</button>
+    <!-- Страница: Профиль -->
+    <div id="profile-page" class="page">
+      <header>
+        <h1>👤 Профиль</h1>
+      </header>
+      <div style="background: var(--card-bg); border-radius: var(--border-radius); padding: 16px; margin-top: 16px;">
+        <p><b>Имя:</b> <span id="user-name">Загрузка...</span></p>
+        <p><b>ID:</b> <span id="user-id"></span></p>
+        <p><b>Подписка:</b> <span style="color: var(--primary);">Активна</span></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Модальное окно -->
+  <div class="modal" id="service-modal">
+    <div class="modal-content">
+      <div class="modal-header" id="modal-title">Информация</div>
+      <div class="modal-body" id="modal-body">Описание услуги</div>
+      <div class="modal-footer">
+        <button onclick="closeModal()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя навигация -->
+  <div class="navbar">
+    <div class="nav-item" data-page="news-page">
+      <i class="fas fa-newspaper"></i>
+      <span>Новости</span>
+    </div>
+    <div class="nav-item active" data-page="services-page">
+      <i class="fas fa-bolt"></i>
+      <span>Услуги</span>
+    </div>
+    <div class="nav-item" data-page="profile-page">
+      <i class="fas fa-user"></i>
+      <span>Профиль</span>
     </div>
   </div>
 
   <script>
-    function sendData() {
-      const service = document.getElementById("service").value;
-      const prompt = document.getElementById("prompt").value.trim();
+    // --- Настройки ---
+    const ADMIN_ID = 123456789; // ← Замените на ваш реальный Telegram ID
+    let currentUser = null;
 
+    // --- Загрузка пользователя ---
+    function loadUser() {
+      const user = Telegram.WebApp.initDataUnsafe.user;
+      if (user) {
+        currentUser = user;
+        document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+        document.getElementById('user-id').textContent = user.id;
+
+        // Показываем форму, если это админ
+        if (user.id == ADMIN_ID) {
+          document.getElementById('news-form').style.display = 'block';
+        }
+      }
+    }
+
+    // --- Переключение страниц ---
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+        item.classList.add('active');
+        const pageId = item.dataset.page;
+        document.getElementById(pageId).classList.add('active');
+
+        if (pageId === 'news-page') loadNews();
+        if (pageId === 'profile-page') loadUser();
+      });
+    });
+
+    // --- Открытие модального окна с информацией об услуге ---
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const title = card.querySelector('h3').innerText;
+        const info = card.dataset.info;
+
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').textContent = info;
+
+        document.getElementById('service-modal').style.display = 'flex';
+
+        // Обновляем выбранную услугу
+        selectedService = card.dataset.service;
+        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+
+    function closeModal() {
+      document.getElementById('service-modal').style.display = 'none';
+    }
+
+    // --- Выбор услуги ---
+    let selectedService = 'presentation';
+    document.querySelector('.service-card').classList.add('selected');
+
+    // --- Отправка данных ---
+    function sendData() {
+      const prompt = document.getElementById("prompt").value.trim();
       if (!prompt) {
-        alert("Введите тему!");
+        alert("Введите тему или задание!");
         return;
       }
 
-      const data = { service, prompt };
+      const data = { service: selectedService, prompt };
       Telegram.WebApp.sendData(JSON.stringify(data));
-      Telegram.WebApp.close();
+      Telegram.WebApp.showNotification("✅ Запрос отправлен в бот!");
     }
+
+    // --- Работа с новостями ---
+    function loadNews() {
+      const container = document.getElementById('news-container');
+      container.innerHTML = ''; // Очистка
+
+      const news = JSON.parse(localStorage.getItem('ai-master-news') || '[]');
+
+      if (news.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding:20px;">Нет новостей</p>';
+        return;
+      }
+
+      news.forEach(post => {
+        const div = document.createElement('div');
+        div.className = 'news-post';
+        div.style.backgroundImage = `url('${post.image || 'https://i.imgur.com/9lGjZ9T.png'}')`;
+        div.innerHTML = `
+          <p><b>${post.title}</b></p>
+          <small>${post.date}</small>
+          <p style="margin-top:8px;">${post.text}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function postNews() {
+      if (currentUser?.id !== ADMIN_ID) {
+        alert('❌ Только создатель может публиковать новости.');
+        return;
+      }
+
+      const title = document.getElementById('news-title').value.trim();
+      const text = document.getElementById('news-text').value.trim();
+      const image = document.getElementById('news-image').value.trim() || 'https://i.imgur.com/9lGjZ9T.png';
+
+      if (!title || !text) {
+        alert('Введите заголовок и текст!');
+        return;
+      }
+
+      const news = JSON.parse(localStorage.getItem('ai-master-news') || '[]');
+      news.unshift({
+        title,
+        text,
+        image,
+        date: new Date().toLocaleDateString('ru-RU'),
+      });
+
+      localStorage.setItem('ai-master-news', JSON.stringify(news));
+      document.getElementById('news-title').value = '';
+      document.getElementById('news-text').value = '';
+      document.getElementById('news-image').value = '';
+
+      loadNews();
+      alert('✅ Новость опубликована!');
+    }
+
+    // --- Загрузка при старте ---
+    window.addEventListener('load', () => {
+      loadUser();
+      if (document.getElementById('news-page').classList.contains('active')) {
+        loadNews();
+      }
+    });
   </script>
 </body>
 </html>
