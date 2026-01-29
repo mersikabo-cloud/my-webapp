@@ -464,13 +464,14 @@
         }
       });
 
-      // Расширяем окно до максимума
-      if (Telegram.WebApp.expand) {
+      // ✅ Расширяем окно и отмечаем готовность
+      if (Telegram?.WebApp) {
         Telegram.WebApp.expand();
+        Telegram.WebApp.ready();
       }
     });
 
-    // --- Правильное кодирование в base64 с поддержкой кириллицы ---
+    // --- Кодировка строки в base64 с поддержкой кириллицы ---
     function btoaUTF8(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
@@ -483,8 +484,15 @@
         return;
       }
 
-      if (!window.Telegram || !Telegram.WebApp) {
-        alert("❌ Telegram WebApp недоступен.");
+      // ✅ Проверка правильного объекта
+      if (!Telegram?.WebApp) {
+        alert("❌ Telegram WebApp недоступен");
+        return;
+      }
+
+      if (typeof Telegram.WebApp.showInvoice !== 'function') {
+        alert("❌ showInvoice не поддерживается. Используйте мобильный Telegram.");
+        console.error("Telegram.WebApp:", Telegram.WebApp);
         return;
       }
 
@@ -494,11 +502,13 @@
         price: selectedPrice
       });
 
+      // ✅ Правильная кодировка с кириллицей
       const payloadBase64 = btoaUTF8(invoicePayload);
 
       try {
+        // ✅ Важно: provider_token указан только как первый аргумент
         Telegram.WebApp.showInvoice(
-          "1744374395:TEST:f7cf5a8aac3223d72854", // PayMaster Test
+          "1744374395:TEST:f7cf5a8aac3223d72854", // provider_token
           {
             title: `Генерация: ${selectedService}`,
             description: prompt.substring(0, 200),
@@ -507,8 +517,8 @@
               { label: "Услуга", amount: selectedPrice * 100 } // в копейках
             ],
             payload: payloadBase64,
-            photo_url: "https://i.imgur.com/9lGjZ9T.png",
-            provider_token: "1744374395:TEST:f7cf5a8aac3223d72854"
+            photo_url: "https://i.imgur.com/9lGjZ9T.png"
+            // ❌ provider_token больше нигде не указываем
           },
           (status) => {
             console.log("Статус оплаты:", status);
