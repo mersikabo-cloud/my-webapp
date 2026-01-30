@@ -224,24 +224,30 @@
       opacity: 0.9;
     }
 
-    /* Нижняя навигация */
+    /* === НОВОЕ: Меню презентаций === */
+    #presentation-menu {
+      display: none;
+    }
+
+    /* === ОБНОВЛЕНО: Круглая нижняя панель (iOS-style) === */
     .navbar {
       position: fixed;
       bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      width: max-content;
-      height: var(--nav-height);
+      width: 90%;
+      max-width: 350px;
+      height: 50px;
       background: var(--nav-bg);
       border: 1px solid #333;
-      border-radius: 12px;
+      border-radius: 30px; /* Сделали круглой */
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 1000;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
-      padding: 0 12px;
+      padding: 0;
     }
 
     .nav-item {
@@ -253,9 +259,9 @@
       font-size: 11px;
       transition: color 0.2s;
       cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin: 0 2px;
+      flex: 1;
+      padding: 8px;
+      border-radius: 20px;
     }
 
     .nav-item.active,
@@ -265,7 +271,7 @@
     }
 
     .nav-item i {
-      font-size: 22px;
+      font-size: 20px;
       margin-bottom: 2px;
     }
 
@@ -281,7 +287,7 @@
     /* Подпись внизу */
     .footer {
       position: fixed;
-      bottom: 50px;
+      bottom: 60px;
       width: 100%;
       text-align: center;
       font-size: 12px;
@@ -309,34 +315,60 @@
       </header>
 
       <div class="services-grid">
-        <div class="service-card" data-service="presentation" data-title="Презентация" data-info="Создайте профессиональную презентацию в PowerPoint за секунды. Подходит для учёбы, бизнеса и выступлений." data-price="20">
+        <!-- Презентация — теперь без оплаты -->
+        <div class="service-card" data-service="presentation-menu">
           <h3><i class="fas fa-chart-pie"></i> Презентация</h3>
-          <p>Создайте PowerPoint за секунды по любой теме.</p>
-          <div class="price-tag">20 ₽</div>
+          <p>Создайте PowerPoint бесплатно по тексту или теме.</p>
         </div>
 
-        <div class="service-card" data-service="photo" data-title="Фото" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E. Идеально для дизайна, обложек и артов." data-price="30">
+        <div class="service-card" data-service="photo" data-title="Фото" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E." data-price="30">
           <h3><i class="fas fa-image"></i> Фото</h3>
-          <p>Генерируйте изображения по описанию (DALL·E).</p>
+          <p>Генерация изображений</p>
           <div class="price-tag">30 ₽</div>
         </div>
 
-        <div class="service-card" data-service="video" data-title="Видео" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами. Готово к публикации в Telegram и Instagram." data-price="40">
+        <div class="service-card" data-service="video" data-title="Видео" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами." data-price="40">
           <h3><i class="fas fa-film"></i> Видео</h3>
-          <p>Создаём короткие видеоролики (в разработке).</p>
+          <p>Короткие видеоролики</p>
           <div class="price-tag">40 ₽</div>
         </div>
 
-        <div class="service-card" data-service="custom" data-title="Индивидуальный проект" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом. Мы делаем всё под ключ с документацией и поддержкой." data-price="300">
+        <div class="service-card" data-service="custom" data-title="Индивидуальный проект" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом." data-price="300">
           <h3><i class="fas fa-cogs"></i> Индивидуальный проект</h3>
           <p>Курсовая, сайт, бот — всё под заказ.</p>
           <div class="price-tag">300 ₽</div>
         </div>
+
+        <!-- VIP Подписка -->
+        <div class="service-card" data-service="buy_vip" data-title="VIP Подписка" data-info="Получите доступ ко всем премиум-функциям на 30 дней." data-price="150">
+          <h3><i class="fas fa-crown"></i> VIP Подписка</h3>
+          <p>Доступ ко всем функциям</p>
+          <div class="price-tag">150 ₽</div>
+        </div>
       </div>
     </div>
 
-    <!-- Экран выбранной услуги -->
-    <div id="service-screen" class="service-screen">
+    <!-- === НОВОЕ: Меню выбора типа презентации === -->
+    <div id="presentation-menu" class="page">
+      <header>
+        <h2>📊 Выберите тип презентации</h2>
+      </header>
+      <div class="services-grid">
+        <div class="service-card" data-preset="text">
+          <h3><i class="fas fa-align-left"></i> По тексту</h3>
+          <p>Введите готовый текст — сделаю слайды</p>
+        </div>
+        <div class="service-card" data-preset="topic">
+          <h3><i class="fas fa-lightbulb"></i> По теме</h3>
+          <p>Введите тему — сам придумаю содержание</p>
+        </div>
+      </div>
+      <input type="text" id="prompt-presentation" placeholder="Введите текст или тему..." />
+      <button class="generate" onclick="generatePresentation()">🚀 Сгенерировать бесплатно</button>
+    </div>
+
+    <!-- Экран выбранной услуги (платные услуги) -->
+    <div id="service-screen" class="page">
       <div class="service-info">
         <h2 id="screen-title">Услуга</h2>
         <p id="screen-info">Описание</p>
@@ -363,13 +395,13 @@
       <div style="background: var(--card-bg); border-radius: var(--border-radius); padding: 16px; margin-top: 16px;">
         <p><b>Имя:</b> <span id="user-name">Загрузка...</span></p>
         <p><b>ID:</b> <span id="user-id"></span></p>
-        <p><b>Подписка:</b> <span style="color: var(--primary);">Активна</span></p>
+        <p><b>VIP:</b> <span id="vip-status">Проверка...</span></p>
       </div>
     </div>
 
   </div>
 
-  <!-- Нижняя навигация -->
+  <!-- === ОБНОВЛЕНО: Круглая нижняя панель === -->
   <div class="navbar">
     <div class="nav-item" data-page="news-page">
       <i class="fas fa-newspaper"></i>
@@ -396,6 +428,7 @@
     let currentUser = null;
     let selectedService = null;
     let selectedPrice = 0;
+    let isVip = false;
 
     // --- Открыть канал ---
     function openChannel() {
@@ -410,10 +443,15 @@
         document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
         document.getElementById('user-id').textContent = user.id;
 
-        if (user.id == ADMIN_ID) {
-          // Можно активировать админ-панель
-        }
+        // Проверка VIP (бот будет отправлять статус через /stats, но можно расширить)
+        fetchVipStatus();
       }
+    }
+
+    async function fetchVipStatus() {
+      // Можно добавить запрос к боту, но пока просто заглушка
+      // В будущем: WebSocket или API
+      document.getElementById('vip-status').textContent = "Нет";
     }
 
     // --- Переключение страниц ---
@@ -431,8 +469,8 @@
       });
     });
 
-    // --- Переход на экран услуги ---
-    document.querySelectorAll('.service-card').forEach(card => {
+    // --- Переход на экран услуги (платные) ---
+    document.querySelectorAll('.service-card[data-service]:not([data-service="presentation-menu"]):not([data-service="buy_vip"])').forEach(card => {
       card.addEventListener('click', () => {
         const title = card.dataset.title;
         const info = card.dataset.info;
@@ -449,6 +487,50 @@
       });
     });
 
+    // --- VIP Подписка ---
+    document.querySelector('[data-service="buy_vip"]').addEventListener('click', () => {
+      selectedService = 'vip';
+      selectedPrice = 150;
+
+      document.getElementById('services-page').classList.remove('active');
+      document.getElementById('service-screen').classList.add('active');
+
+      document.getElementById('screen-title').textContent = 'VIP Подписка';
+      document.getElementById('screen-info').textContent = 'Получите полный доступ ко всем функциям на 30 дней.';
+      document.getElementById('screen-price').textContent = '150 ₽';
+      document.getElementById('prompt').placeholder = 'Введите комментарий (необязательно)';
+      document.getElementById('prompt').value = '';
+    });
+
+    // --- Меню презентаций ---
+    document.querySelector('[data-service="presentation-menu"]').addEventListener('click', () => {
+      document.getElementById('services-page').classList.remove('active');
+      document.getElementById('presentation-menu').classList.add('active');
+    });
+
+    document.querySelectorAll('#presentation-menu .service-card').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const preset = btn.dataset.preset;
+        const input = document.getElementById('prompt-presentation');
+        input.placeholder = preset === 'text' ? 'Введите текст...' : 'Введите тему...';
+      });
+    });
+
+    function generatePresentation() {
+      const prompt = document.getElementById('prompt-presentation').value.trim();
+      if (!prompt) {
+        alert("Введите текст или тему!");
+        return;
+      }
+      const mode = document.querySelector('#presentation-menu .service-card[data-preset].selected')?.dataset.preset || 'topic';
+      Telegram.WebApp.sendData(JSON.stringify({
+        service: "presentation",
+        prompt: prompt,
+        mode: mode
+      }));
+      Telegram.WebApp.showAlert("🚀 Генерируем презентацию бесплатно...");
+    }
+
     // --- Возврат по кнопке Telegram ---
     window.addEventListener('load', () => {
       loadUser();
@@ -456,15 +538,18 @@
       Telegram.WebApp.BackButton.show();
       Telegram.WebApp.BackButton.onClick(() => {
         const screen = document.getElementById('service-screen');
+        const menu = document.getElementById('presentation-menu');
         if (screen.classList.contains('active')) {
           screen.classList.remove('active');
+          document.getElementById('services-page').classList.add('active');
+        } else if (menu.classList.contains('active')) {
+          menu.classList.remove('active');
           document.getElementById('services-page').classList.add('active');
         } else {
           document.querySelector('.nav-item[data-page="services-page"]').click();
         }
       });
 
-      // ✅ Расширяем окно и отмечаем готовность
       if (Telegram?.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.ready();
@@ -476,7 +561,7 @@
       return btoa(unescape(encodeURIComponent(str)));
     }
 
-    // --- Платёж через PayMaster ---
+    // --- Платёж ---
     function payAndGenerate() {
       const prompt = document.getElementById("prompt").value.trim();
       if (!prompt) {
@@ -484,56 +569,46 @@
         return;
       }
 
-      // ✅ Проверка правильного объекта
       if (!Telegram?.WebApp) {
         alert("❌ Telegram WebApp недоступен");
         return;
       }
 
       if (typeof Telegram.WebApp.showInvoice !== 'function') {
-        alert("❌ showInvoice не поддерживается. Используйте мобильный Telegram.");
-        console.error("Telegram.WebApp:", Telegram.WebApp);
+        alert("❌ showInvoice не поддерживается");
         return;
       }
 
       const invoicePayload = JSON.stringify({
-        service: selectedService,
+        service: selectedService === 'vip' ? 'vip' : selectedService,
         prompt: prompt,
         price: selectedPrice
       });
 
-      // ✅ Правильная кодировка с кириллицей
       const payloadBase64 = btoaUTF8(invoicePayload);
 
       try {
-        // ✅ Важно: provider_token указан только как первый аргумент
         Telegram.WebApp.showInvoice(
-          "1744374395:TEST:f7cf5a8aac3223d72854", // provider_token
+          "1744374395:TEST:f7cf5a8aac3223d72854",
           {
-            title: `Генерация: ${selectedService}`,
+            title: selectedService === 'vip' ? "💎 VIP Подписка" : `Генерация: ${document.getElementById('screen-title').textContent}`,
             description: prompt.substring(0, 200),
             currency: "RUB",
-            prices: [
-              { label: "Услуга", amount: selectedPrice * 100 } // в копейках
-            ],
+            prices: [{ label: "Услуга", amount: selectedPrice * 100 }],
             payload: payloadBase64,
             photo_url: "https://i.imgur.com/9lGjZ9T.png"
-            // ❌ provider_token больше нигде не указываем
           },
           (status) => {
-            console.log("Статус оплаты:", status);
             if (status === "paid") {
               Telegram.WebApp.sendData(invoicePayload);
-              Telegram.WebApp.showAlert("✅ Оплата прошла! Генерируем контент...");
-            } else if (status === "failed") {
-              Telegram.WebApp.showAlert("❌ Оплата не удалась.");
-            } else if (status === "closed") {
-              Telegram.WebApp.showAlert("🚫 Вы закрыли окно оплаты.");
+              Telegram.WebApp.showAlert("✅ Оплата прошла!");
+            } else {
+              Telegram.WebApp.showAlert(`🚫 Оплата не удалась (${status})`);
             }
           }
         );
       } catch (err) {
-        console.error("Ошибка вызова showInvoice:", err);
+        console.error("Ошибка:", err);
         alert("Ошибка оплаты: " + err.message);
       }
     }
