@@ -41,7 +41,7 @@
       margin: 0 auto;
     }
 
-    /* Логотип-самолётик */
+    /* Логотип */
     .app-header {
       position: fixed;
       top: 16px;
@@ -89,7 +89,7 @@
     }
 
     .service-card {
-      background: var(--card-bg) url('https://i.imgur.com/9lGjZ9T.png') no-repeat center center / cover;
+      background: var(--card-bg);
       border-radius: var(--border-radius);
       padding: 20px;
       box-shadow: var(--shadow);
@@ -116,14 +116,20 @@
 
     .service-card[data-service="photo"] {
       background-image: url('https://i.imgur.com/8VvJkYm.jpg');
+      background-size: cover;
+      background-position: center;
     }
 
     .service-card[data-service="video"] {
       background-image: url('https://i.imgur.com/5XfFfDq.jpg');
+      background-size: cover;
+      background-position: center;
     }
 
     .service-card[data-service="custom"] {
       background-image: url('https://i.imgur.com/3KQ5ZqP.jpg');
+      background-size: cover;
+      background-position: center;
     }
 
     .service-card:hover,
@@ -224,12 +230,7 @@
       opacity: 0.9;
     }
 
-    /* === НОВОЕ: Меню презентаций === */
-    #presentation-menu {
-      display: none;
-    }
-
-    /* === ОБНОВЛЕНО: Круглая нижняя панель (iOS-style) === */
+    /* === Круглая нижняя панель (iOS-style) === */
     .navbar {
       position: fixed;
       bottom: 8px;
@@ -240,14 +241,13 @@
       height: 50px;
       background: var(--nav-bg);
       border: 1px solid #333;
-      border-radius: 30px; /* Сделали круглой */
+      border-radius: 30px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 1000;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
-      padding: 0;
     }
 
     .nav-item {
@@ -264,10 +264,10 @@
       border-radius: 20px;
     }
 
-    .nav-item.active,
-    .nav-item:hover {
+    .nav-item.active {
       color: var(--primary);
       background: rgba(76, 154, 255, 0.1);
+      border-radius: 20px;
     }
 
     .nav-item i {
@@ -284,7 +284,7 @@
       display: block;
     }
 
-    /* Подпись внизу */
+    /* Подпись */
     .footer {
       position: fixed;
       bottom: 60px;
@@ -315,40 +315,36 @@
       </header>
 
       <div class="services-grid">
-        <!-- Презентация — теперь без оплаты -->
-        <div class="service-card" data-service="presentation-menu">
+        <!-- Презентация -->
+        <div class="service-card" data-service="presentation_menu">
           <h3><i class="fas fa-chart-pie"></i> Презентация</h3>
           <p>Создайте PowerPoint бесплатно по тексту или теме.</p>
         </div>
 
-        <div class="service-card" data-service="photo" data-title="Фото" data-info="Генерируйте уникальные изображения по текстовому описанию с помощью DALL·E." data-price="30">
+        <!-- Фото -->
+        <div class="service-card" data-service="photo" data-title="Фото" data-info="Генерируйте уникальные изображения по текстовому описанию." data-price="30">
           <h3><i class="fas fa-image"></i> Фото</h3>
           <p>Генерация изображений</p>
           <div class="price-tag">30 ₽</div>
         </div>
 
-        <div class="service-card" data-service="video" data-title="Видео" data-info="Создаём короткие видеоролики с озвучкой, текстом и визуальными эффектами." data-price="40">
+        <!-- Видео -->
+        <div class="service-card" data-service="video" data-title="Видео" data-info="Создаём короткие видеоролики с озвучкой и эффектами." data-price="40">
           <h3><i class="fas fa-film"></i> Видео</h3>
           <p>Короткие видеоролики</p>
           <div class="price-tag">40 ₽</div>
         </div>
 
-        <div class="service-card" data-service="custom" data-title="Индивидуальный проект" data-info="Закажите индивидуальный проект: сайт, бот, курсовая работа, диплом." data-price="300">
+        <!-- Индивидуальный проект -->
+        <div class="service-card" data-service="custom" data-title="Индивидуальный проект" data-info="Закажите сайт, бота, курсовую работу." data-price="300">
           <h3><i class="fas fa-cogs"></i> Индивидуальный проект</h3>
           <p>Курсовая, сайт, бот — всё под заказ.</p>
           <div class="price-tag">300 ₽</div>
         </div>
-
-        <!-- VIP Подписка -->
-        <div class="service-card" data-service="buy_vip" data-title="VIP Подписка" data-info="Получите доступ ко всем премиум-функциям на 30 дней." data-price="150">
-          <h3><i class="fas fa-crown"></i> VIP Подписка</h3>
-          <p>Доступ ко всем функциям</p>
-          <div class="price-tag">150 ₽</div>
-        </div>
       </div>
     </div>
 
-    <!-- === НОВОЕ: Меню выбора типа презентации === -->
+    <!-- Меню выбора типа презентации -->
     <div id="presentation-menu" class="page">
       <header>
         <h2>📊 Выберите тип презентации</h2>
@@ -364,10 +360,10 @@
         </div>
       </div>
       <input type="text" id="prompt-presentation" placeholder="Введите текст или тему..." />
-      <button class="generate" onclick="generatePresentation()">🚀 Сгенерировать бесплатно</button>
+      <button class="generate" onclick="sendPresentationRequest()">🚀 Сгенерировать бесплатно</button>
     </div>
 
-    <!-- Экран выбранной услуги (платные услуги) -->
+    <!-- Экран выбранной услуги -->
     <div id="service-screen" class="page">
       <div class="service-info">
         <h2 id="screen-title">Услуга</h2>
@@ -378,7 +374,7 @@
       <button class="generate" onclick="payAndGenerate()">💳 Оплатить и сгенерировать</button>
     </div>
 
-    <!-- Страница: Новости -->
+    <!-- Новости -->
     <div id="news-page" class="page">
       <header>
         <h1>📰 Новости</h1>
@@ -387,7 +383,7 @@
       <p style="color:var(--text-secondary); text-align:center; padding:20px;">Новости скоро появятся!</p>
     </div>
 
-    <!-- Страница: Профиль -->
+    <!-- Профиль -->
     <div id="profile-page" class="page">
       <header>
         <h1>👤 Профиль</h1>
@@ -395,13 +391,13 @@
       <div style="background: var(--card-bg); border-radius: var(--border-radius); padding: 16px; margin-top: 16px;">
         <p><b>Имя:</b> <span id="user-name">Загрузка...</span></p>
         <p><b>ID:</b> <span id="user-id"></span></p>
-        <p><b>VIP:</b> <span id="vip-status">Проверка...</span></p>
+        <p><b>VIP:</b> <span id="vip-status">Нет</span></p>
       </div>
     </div>
 
   </div>
 
-  <!-- === ОБНОВЛЕНО: Круглая нижняя панель === -->
+  <!-- Круглая нижняя панель -->
   <div class="navbar">
     <div class="nav-item" data-page="news-page">
       <i class="fas fa-newspaper"></i>
@@ -417,18 +413,16 @@
     </div>
   </div>
 
-  <!-- Подпись внизу -->
+  <!-- Подпись -->
   <div class="footer">
     Все права защищены © 2025
   </div>
 
   <script>
-    // --- Настройки ---
-    const ADMIN_ID = 5499502358;
+    // --- Глобальные переменные ---
     let currentUser = null;
     let selectedService = null;
     let selectedPrice = 0;
-    let isVip = false;
 
     // --- Открыть канал ---
     function openChannel() {
@@ -442,16 +436,8 @@
         currentUser = user;
         document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
         document.getElementById('user-id').textContent = user.id;
-
-        // Проверка VIP (бот будет отправлять статус через /stats, но можно расширить)
-        fetchVipStatus();
+        document.getElementById('vip-status').textContent = "Нет";
       }
-    }
-
-    async function fetchVipStatus() {
-      // Можно добавить запрос к боту, но пока просто заглушка
-      // В будущем: WebSocket или API
-      document.getElementById('vip-status').textContent = "Нет";
     }
 
     // --- Переключение страниц ---
@@ -459,7 +445,6 @@
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('service-screen').classList.remove('active');
 
         item.classList.add('active');
         const pageId = item.dataset.page;
@@ -469,69 +454,123 @@
       });
     });
 
-    // --- Переход на экран услуги (платные) ---
-    document.querySelectorAll('.service-card[data-service]:not([data-service="presentation-menu"]):not([data-service="buy_vip"])').forEach(card => {
+    // --- Переход к платной услуге ---
+    document.querySelectorAll('.service-card[data-service]:not([data-service="presentation_menu"])').forEach(card => {
       card.addEventListener('click', () => {
-        const title = card.dataset.title;
-        const info = card.dataset.info;
         selectedService = card.dataset.service;
         selectedPrice = parseInt(card.dataset.price);
 
         document.getElementById('services-page').classList.remove('active');
         document.getElementById('service-screen').classList.add('active');
 
-        document.getElementById('screen-title').textContent = title;
-        document.getElementById('screen-info').textContent = info;
+        document.getElementById('screen-title').textContent = card.dataset.title;
+        document.getElementById('screen-info').textContent = card.dataset.info;
         document.getElementById('screen-price').textContent = `${selectedPrice} ₽`;
-        document.getElementById('prompt').value = '';
+
+        // Восстановление сохранённого ввода
+        const savedPrompt = localStorage.getItem(`prompt_${selectedService}`);
+        document.getElementById('prompt').value = savedPrompt || '';
       });
     });
 
-    // --- VIP Подписка ---
-    document.querySelector('[data-service="buy_vip"]').addEventListener('click', () => {
-      selectedService = 'vip';
-      selectedPrice = 150;
-
-      document.getElementById('services-page').classList.remove('active');
-      document.getElementById('service-screen').classList.add('active');
-
-      document.getElementById('screen-title').textContent = 'VIP Подписка';
-      document.getElementById('screen-info').textContent = 'Получите полный доступ ко всем функциям на 30 дней.';
-      document.getElementById('screen-price').textContent = '150 ₽';
-      document.getElementById('prompt').placeholder = 'Введите комментарий (необязательно)';
-      document.getElementById('prompt').value = '';
-    });
-
     // --- Меню презентаций ---
-    document.querySelector('[data-service="presentation-menu"]').addEventListener('click', () => {
+    document.querySelector('[data-service="presentation_menu"]').addEventListener('click', () => {
       document.getElementById('services-page').classList.remove('active');
       document.getElementById('presentation-menu').classList.add('active');
     });
 
+    // --- Выбор режима презентации ---
     document.querySelectorAll('#presentation-menu .service-card').forEach(btn => {
       btn.addEventListener('click', () => {
+        document.querySelectorAll('#presentation-menu .service-card').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
         const preset = btn.dataset.preset;
         const input = document.getElementById('prompt-presentation');
         input.placeholder = preset === 'text' ? 'Введите текст...' : 'Введите тему...';
+
+        const savedText = localStorage.getItem('prompt_presentation');
+        input.value = savedText || '';
       });
     });
 
-    function generatePresentation() {
+    // --- Отправка запроса на генерацию презентации ---
+    function sendPresentationRequest() {
       const prompt = document.getElementById('prompt-presentation').value.trim();
       if (!prompt) {
         alert("Введите текст или тему!");
         return;
       }
-      const mode = document.querySelector('#presentation-menu .service-card[data-preset].selected')?.dataset.preset || 'topic';
+
+      localStorage.setItem('prompt_presentation', prompt);
+
+      const mode = document.querySelector('#presentation-menu .service-card.selected')?.dataset.preset || 'topic';
+
+      sendDataToBot("presentation", prompt, mode);
+    }
+
+    // --- Отправка данных в бот ---
+    function sendDataToBot(service, prompt, mode = null) {
       Telegram.WebApp.sendData(JSON.stringify({
-        service: "presentation",
+        service: service,
         prompt: prompt,
         mode: mode
       }));
-      Telegram.WebApp.showAlert("🚀 Генерируем презентацию бесплатно...");
+      Telegram.WebApp.showAlert("🚀 Запрос отправлен в бот! Генерируем...");
     }
 
-    // --- Возврат по кнопке Telegram ---
+    // --- Платёж и генерация ---
+    function payAndGenerate() {
+      const promptInput = document.getElementById("prompt");
+      const prompt = promptInput.value.trim();
+
+      if (!prompt) {
+        alert("Введите тему или задание!");
+        return;
+      }
+
+      // Сохраняем ввод
+      localStorage.setItem(`prompt_${selectedService}`, prompt);
+
+      const payload = {
+        service: selectedService,
+        prompt: prompt,
+        price: selectedPrice
+      };
+
+      const payloadBase64 = btoaUTF8(JSON.stringify(payload));
+
+      try {
+        Telegram.WebApp.showInvoice(
+          "1744374395:TEST:f7cf5a8aac3223d72854",
+          {
+            title: `Генерация: ${document.getElementById('screen-title').textContent}`,
+            description: prompt.substring(0, 200),
+            currency: "RUB",
+            prices: [{ label: "Услуга", amount: selectedPrice * 100 }],
+            payload: payloadBase64,
+            photo_url: "https://i.imgur.com/9lGjZ9T.png"
+          },
+          (status) => {
+            if (status === "paid") {
+              Telegram.WebApp.sendData(JSON.stringify(payload));
+              Telegram.WebApp.showAlert("✅ Оплата прошла! Генерируем...");
+            } else {
+              Telegram.WebApp.showAlert(`🚫 Оплата не удалась (${status})`);
+            }
+          }
+        );
+      } catch (err) {
+        console.error("Ошибка оплаты:", err);
+        alert("Ошибка оплаты. Попробуйте позже.");
+      }
+    }
+
+    // --- Base64 с поддержкой кириллицы ---
+    function btoaUTF8(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    // --- Возврат через BackButton ---
     window.addEventListener('load', () => {
       loadUser();
 
@@ -554,64 +593,14 @@
         Telegram.WebApp.expand();
         Telegram.WebApp.ready();
       }
+
+      // Восстановление ввода
+      const savedPresentationPrompt = localStorage.getItem('prompt_presentation');
+      const presentationInput = document.getElementById('prompt-presentation');
+      if (presentationInput && savedPresentationPrompt) {
+        presentationInput.value = savedPresentationPrompt;
+      }
     });
-
-    // --- Кодировка строки в base64 с поддержкой кириллицы ---
-    function btoaUTF8(str) {
-      return btoa(unescape(encodeURIComponent(str)));
-    }
-
-    // --- Платёж ---
-    function payAndGenerate() {
-      const prompt = document.getElementById("prompt").value.trim();
-      if (!prompt) {
-        alert("Введите тему или задание!");
-        return;
-      }
-
-      if (!Telegram?.WebApp) {
-        alert("❌ Telegram WebApp недоступен");
-        return;
-      }
-
-      if (typeof Telegram.WebApp.showInvoice !== 'function') {
-        alert("❌ showInvoice не поддерживается");
-        return;
-      }
-
-      const invoicePayload = JSON.stringify({
-        service: selectedService === 'vip' ? 'vip' : selectedService,
-        prompt: prompt,
-        price: selectedPrice
-      });
-
-      const payloadBase64 = btoaUTF8(invoicePayload);
-
-      try {
-        Telegram.WebApp.showInvoice(
-          "1744374395:TEST:f7cf5a8aac3223d72854",
-          {
-            title: selectedService === 'vip' ? "💎 VIP Подписка" : `Генерация: ${document.getElementById('screen-title').textContent}`,
-            description: prompt.substring(0, 200),
-            currency: "RUB",
-            prices: [{ label: "Услуга", amount: selectedPrice * 100 }],
-            payload: payloadBase64,
-            photo_url: "https://i.imgur.com/9lGjZ9T.png"
-          },
-          (status) => {
-            if (status === "paid") {
-              Telegram.WebApp.sendData(invoicePayload);
-              Telegram.WebApp.showAlert("✅ Оплата прошла!");
-            } else {
-              Telegram.WebApp.showAlert(`🚫 Оплата не удалась (${status})`);
-            }
-          }
-        );
-      } catch (err) {
-        console.error("Ошибка:", err);
-        alert("Ошибка оплаты: " + err.message);
-      }
-    }
   </script>
 </body>
 </html>
