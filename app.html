@@ -9,15 +9,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     :root {
-      --bg: #121212;
-      --card-bg: #1e1e1e;
+      --bg: linear-gradient(135deg, #121212, #1e1a2f, #1a2c38);
+      --card-bg: rgba(30, 30, 30, 0.8);
       --primary: #4c9aff;
       --text: #ffffff;
       --text-secondary: #b0b0b0;
-      --border-radius: 16px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --nav-height: 50px;
-      --nav-bg: #1a1a1a;
+      --border-radius: 20px;
+      --shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      --nav-height: 60px;
+      --nav-bg: rgba(26, 26, 26, 0.9);
     }
 
     * {
@@ -30,10 +30,17 @@
 
     body {
       background: var(--bg);
-      color: var(--text);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       min-height: 100vh;
-      padding: 50px 20px calc(var(--nav-height) + 40px) 20px;
+      padding: 50px 20px calc(var(--nav-height) + 30px) 20px;
       overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .container {
@@ -84,27 +91,28 @@
     /* Карточки услуг */
     .services-grid {
       display: grid;
-      gap: 14px;
+      gap: 16px;
       margin-bottom: 24px;
     }
 
     .service-card {
       background: var(--card-bg);
       border-radius: var(--border-radius);
-      padding: 20px;
+      padding: 24px;
       box-shadow: var(--shadow);
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
-      border: 1px solid #2d2d2d;
+      border: 1px solid rgba(76, 154, 255, 0.1);
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(10px);
     }
 
     .service-card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+      background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
       z-index: 1;
       border-radius: var(--border-radius);
     }
@@ -114,33 +122,19 @@
       z-index: 2;
     }
 
-    .service-card[data-service="photo"] {
-      background-image: url('https://i.imgur.com/8VvJkYm.jpg');
-      background-size: cover;
-      background-position: center;
-    }
-
-    .service-card[data-service="video"] {
-      background-image: url('https://i.imgur.com/5XfFfDq.jpg');
-      background-size: cover;
-      background-position: center;
-    }
-
-    .service-card[data-service="custom"] {
-      background-image: url('https://i.imgur.com/3KQ5ZqP.jpg');
-      background-size: cover;
-      background-position: center;
-    }
+    .service-card[data-service="photo"]::before { background-image: url('https://i.imgur.com/8VvJkYm.jpg'); background-size: cover; }
+    .service-card[data-service="video"]::before { background-image: url('https://i.imgur.com/5XfFfDq.jpg'); background-size: cover; }
+    .service-card[data-service="custom"]::before { background-image: url('https://i.imgur.com/3KQ5ZqP.jpg'); background-size: cover; }
 
     .service-card:hover,
     .service-card.selected {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: var(--primary);
-      box-shadow: 0 6px 16px rgba(76, 154, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(76, 154, 255, 0.3);
     }
 
     .service-card h3 {
-      font-size: 17px;
+      font-size: 18px;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
@@ -150,18 +144,19 @@
     .service-card p {
       font-size: 14px;
       color: var(--text-secondary);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .price-tag {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.7);
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.8);
       color: white;
       font-size: 13px;
-      padding: 4px 8px;
-      border-radius: 8px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-weight: 600;
     }
 
     /* Экран услуги */
@@ -178,7 +173,7 @@
       background: var(--card-bg);
       border-radius: var(--border-radius);
       padding: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       box-shadow: var(--shadow);
     }
 
@@ -196,9 +191,9 @@
     input[type="text"] {
       width: 100%;
       padding: 16px;
-      background: var(--card-bg);
+      background: rgba(40, 40, 40, 0.7);
       border: 1px solid #333;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 16px;
       color: var(--text);
       outline: none;
@@ -230,23 +225,23 @@
       opacity: 0.9;
     }
 
-    /* === Круглая нижняя панель (iOS-style) === */
+    /* === Круглая нижняя панель === */
     .navbar {
       position: fixed;
-      bottom: 8px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
-      max-width: 350px;
-      height: 50px;
+      max-width: 360px;
+      height: 56px;
       background: var(--nav-bg);
-      border: 1px solid #333;
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 30px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       z-index: 1000;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
     }
 
@@ -257,17 +252,17 @@
       justify-content: center;
       color: var(--text-secondary);
       font-size: 11px;
-      transition: color 0.2s;
+      transition: all 0.3s;
       cursor: pointer;
       flex: 1;
       padding: 8px;
-      border-radius: 20px;
+      border-radius: 24px;
     }
 
     .nav-item.active {
       color: var(--primary);
-      background: rgba(76, 154, 255, 0.1);
-      border-radius: 20px;
+      background: rgba(76, 154, 255, 0.15);
+      font-weight: 600;
     }
 
     .nav-item i {
@@ -287,13 +282,14 @@
     /* Подпись */
     .footer {
       position: fixed;
-      bottom: 60px;
+      bottom: 70px;
       width: 100%;
       text-align: center;
       font-size: 12px;
       color: var(--text-secondary);
       z-index: 999;
       padding: 8px;
+      font-style: italic;
     }
   </style>
 </head>
@@ -340,6 +336,13 @@
           <h3><i class="fas fa-cogs"></i> Индивидуальный проект</h3>
           <p>Курсовая, сайт, бот — всё под заказ.</p>
           <div class="price-tag">300 ₽</div>
+        </div>
+
+        <!-- VIP Подписка -->
+        <div class="service-card" data-service="buy_vip" data-title="VIP Подписка" data-info="Полный доступ ко всем функциям на 3 месяца." data-price="500">
+          <h3><i class="fas fa-crown"></i> VIP Подписка</h3>
+          <p>Бесплатный доступ ко всему</p>
+          <div class="price-tag">500 ₽</div>
         </div>
       </div>
     </div>
@@ -388,10 +391,15 @@
       <header>
         <h1>👤 Профиль</h1>
       </header>
-      <div style="background: var(--card-bg); border-radius: var(--border-radius); padding: 16px; margin-top: 16px;">
+      <div style="background:var(--card-bg);border-radius:var(--border-radius);padding:16px;margin-top:16px;">
         <p><b>Имя:</b> <span id="user-name">Загрузка...</span></p>
         <p><b>ID:</b> <span id="user-id"></span></p>
         <p><b>VIP:</b> <span id="vip-status">Нет</span></p>
+        <div id="admin-panel" style="display:none; margin-top:16px; padding:12px; background:#2d2d2d; border-radius:12px;">
+          <h3>🔧 Админ-панель</h3>
+          <input type="text" id="admin-vip-id" placeholder="ID пользователя" style="margin-bottom:8px;width:100%;padding:10px;background:#1e1e1e;color:white;border:1px solid #444;border-radius:8px;" />
+          <button onclick="giveVIP()" style="width:100%;padding:12px;background:#4c9aff;color:white;border:none;border-radius:8px;font-weight:bold;">Выдать VIP</button>
+        </div>
       </div>
     </div>
 
@@ -415,21 +423,18 @@
 
   <!-- Подпись -->
   <div class="footer">
-    Все права защищены © 2025
+    Klinoff Intelligent Universe © 2026
   </div>
 
   <script>
-    // --- Глобальные переменные ---
     let currentUser = null;
     let selectedService = null;
     let selectedPrice = 0;
 
-    // --- Открыть канал ---
     function openChannel() {
       Telegram.WebApp.openLink('https://t.me/UnrealCompanyTg');
     }
 
-    // --- Загрузка пользователя ---
     function loadUser() {
       const user = Telegram.WebApp.initDataUnsafe.user;
       if (user) {
@@ -437,24 +442,25 @@
         document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
         document.getElementById('user-id').textContent = user.id;
         document.getElementById('vip-status').textContent = "Нет";
+
+        // Показываем админ-панель только если это @makswwyy (ID: 5499502358)
+        if (user.id == 5499502358) {
+          document.getElementById('admin-panel').style.display = 'block';
+        }
       }
     }
 
-    // --- Переключение страниц ---
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
         item.classList.add('active');
         const pageId = item.dataset.page;
         document.getElementById(pageId).classList.add('active');
-
         if (pageId === 'profile-page') loadUser();
       });
     });
 
-    // --- Переход к платной услуге ---
     document.querySelectorAll('.service-card[data-service]:not([data-service="presentation_menu"])').forEach(card => {
       card.addEventListener('click', () => {
         selectedService = card.dataset.service;
@@ -467,19 +473,15 @@
         document.getElementById('screen-info').textContent = card.dataset.info;
         document.getElementById('screen-price').textContent = `${selectedPrice} ₽`;
 
-        // Восстановление сохранённого ввода
-        const savedPrompt = localStorage.getItem(`prompt_${selectedService}`);
-        document.getElementById('prompt').value = savedPrompt || '';
+        document.getElementById('prompt').value = ''; // Очищаем поле
       });
     });
 
-    // --- Меню презентаций ---
     document.querySelector('[data-service="presentation_menu"]').addEventListener('click', () => {
       document.getElementById('services-page').classList.remove('active');
       document.getElementById('presentation-menu').classList.add('active');
     });
 
-    // --- Выбор режима презентации ---
     document.querySelectorAll('#presentation-menu .service-card').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#presentation-menu .service-card').forEach(b => b.classList.remove('selected'));
@@ -487,28 +489,20 @@
         const preset = btn.dataset.preset;
         const input = document.getElementById('prompt-presentation');
         input.placeholder = preset === 'text' ? 'Введите текст...' : 'Введите тему...';
-
-        const savedText = localStorage.getItem('prompt_presentation');
-        input.value = savedText || '';
+        input.value = ''; // Очистка при выборе
       });
     });
 
-    // --- Отправка запроса на генерацию презентации ---
     function sendPresentationRequest() {
       const prompt = document.getElementById('prompt-presentation').value.trim();
       if (!prompt) {
         alert("Введите текст или тему!");
         return;
       }
-
-      localStorage.setItem('prompt_presentation', prompt);
-
       const mode = document.querySelector('#presentation-menu .service-card.selected')?.dataset.preset || 'topic';
-
       sendDataToBot("presentation", prompt, mode);
     }
 
-    // --- Отправка данных в бот ---
     function sendDataToBot(service, prompt, mode = null) {
       Telegram.WebApp.sendData(JSON.stringify({
         service: service,
@@ -518,7 +512,6 @@
       Telegram.WebApp.showAlert("🚀 Запрос отправлен в бот! Генерируем...");
     }
 
-    // --- Платёж и генерация ---
     function payAndGenerate() {
       const promptInput = document.getElementById("prompt");
       const prompt = promptInput.value.trim();
@@ -527,9 +520,6 @@
         alert("Введите тему или задание!");
         return;
       }
-
-      // Сохраняем ввод
-      localStorage.setItem(`prompt_${selectedService}`, prompt);
 
       const payload = {
         service: selectedService,
@@ -561,19 +551,30 @@
         );
       } catch (err) {
         console.error("Ошибка оплаты:", err);
-        alert("Ошибка оплаты. Попробуйте позже.");
+        alert("Ошибка оплаты.");
       }
     }
 
-    // --- Base64 с поддержкой кириллицы ---
+    function giveVIP() {
+      const userId = document.getElementById('admin-vip-id').value.trim();
+      if (!userId || isNaN(userId)) {
+        alert("Введите корректный ID");
+        return;
+      }
+      Telegram.WebApp.sendData(JSON.stringify({
+        action: "give_vip",
+        target_user_id: userId,
+        admin_id: currentUser.id
+      }));
+      alert(`✅ VIP выдан пользователю ${userId}`);
+    }
+
     function btoaUTF8(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
 
-    // --- Возврат через BackButton ---
     window.addEventListener('load', () => {
       loadUser();
-
       Telegram.WebApp.BackButton.show();
       Telegram.WebApp.BackButton.onClick(() => {
         const screen = document.getElementById('service-screen');
@@ -592,13 +593,6 @@
       if (Telegram?.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.ready();
-      }
-
-      // Восстановление ввода
-      const savedPresentationPrompt = localStorage.getItem('prompt_presentation');
-      const presentationInput = document.getElementById('prompt-presentation');
-      if (presentationInput && savedPresentationPrompt) {
-        presentationInput.value = savedPresentationPrompt;
       }
     });
   </script>
